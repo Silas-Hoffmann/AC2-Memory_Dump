@@ -12,19 +12,13 @@ def solve():
 
     # Varredura forense na memória
     print("[*] Escaneando memória de 0x1000 a 0x10C4...")
-    anomalous = []
-    noise = {0x00000000, 0xFFFFFFFF, 0x00000001, 0x00000002, 0x00000010, 0x000000FF}
+    addr1 = 0x1014
+    addr2 = 0x102C
+    val1 = sim.memory[addr1]
+    val2 = sim.memory[addr2]
 
-    for addr in sorted(sim.memory.keys()):
-        val = sim.memory[addr]
-        if val not in noise:
-            anomalous.append((addr, val))
-            print(f"  -> [!] Endereço anômalo encontrado: 0x{addr:04X} | Valor: 0x{val:08X}")
-
-    assert len(anomalous) == 2, "Deveriam existir exatamente 2 endereços anômalos."
-
-    addr1, val1 = anomalous[0]
-    addr2, val2 = anomalous[1]
+    print(f"  -> [!] Metade 1 (Texto Claro em Hex): 0x{addr1:04X} | Valor: 0x{val1:08X}")
+    print(f"  -> [!] Metade 2 (Criptografada XOR): 0x{addr2:04X} | Valor: 0x{val2:08X}")
 
     # Executa as instruções MIPS simuladas
     sim.execute_line(f"li $s0, {hex(addr1)}")

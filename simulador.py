@@ -25,19 +25,16 @@ HELP_TEXT = """
 Instruções Suportadas:
 --------------------------------------------------------------------------------
 Comandos MIPS:
-  li $reg, imm             -> Carrega imediato/endereço em $reg (ex: li $s0, 0x1000)
-  lw $rt, offset($rs)      -> Lê 32 bits da memória [offset + $rs] em $rt (ex: lw $t0, 0($s0))
-  addi $rt, $rs, imm       -> Soma imediata ($rt = $rs + imm) (ex: addi $s0, $s0, 4)
-  xor $rd, $rs, $rt        -> XOR bit a bit ($rd = $rs ^ $rt) (ex: xor $t2, $t0, $t1)
-
-Comandos do Terminal CTF:
+  li $reg, imm             -> Carrega imediato/endereço em $reg
+  lw $rt, offset($rs)      -> Lê 32 bits da memória em $rt
+  addi $rt, $rs, imm       -> Soma imediata
+  xor $rd, $rs, $rt        -> XOR bit a bit
   show $reg                -> Exibe o valor do registrador em Hexadecimal
   show mem offset($rs)     -> Inspeciona diretamente o conteúdo da memória em Hex
   dump                     -> Exibe os valores de todos os registradores ativos
   reset                    -> Reseta todos os registradores para zero
   submit <flag>            -> Valida a flag encontrada
-  help                     -> Exibe este menu de ajuda
-  exit / quit              -> Encerra o terminal
+  help                     -> Exibe o menu de ajuda
 --------------------------------------------------------------------------------
 """
 
@@ -129,14 +126,10 @@ class MIPSSimulator:
             print(HELP_TEXT)
             return
 
-        if line.lower() in ("exit", "quit"):
-            print("[+] Encerrando terminal forense. Até logo!")
-            sys.exit(0)
-
         if line.lower() == "reset":
             for r in self.regs:
                 self.regs[r] = 0
-            print("[+] Registradores resetados para 0x00000000.")
+            print("[+] Registradores resetados")
             return
 
         if line.lower() == "dump":
@@ -170,7 +163,7 @@ class MIPSSimulator:
         if op == "li":
             # li $reg, imm
             if len(tokens) != 3:
-                print("[-] Erro de sintaxe. Uso correto: li $reg, imm")
+                print("[-] Erro de sintaxe")
                 return
             reg = self.canonical_reg(tokens[1])
             if not reg or reg == "$0":
@@ -185,7 +178,7 @@ class MIPSSimulator:
         elif op == "lw":
             # lw $rt, offset($rs)
             if len(tokens) != 3:
-                print("[-] Erro de sintaxe. Uso correto: lw $rt, offset($rs)")
+                print("[-] Erro de sintaxe")
                 return
             rt = self.canonical_reg(tokens[1])
             if not rt or rt == "$0":
@@ -200,14 +193,14 @@ class MIPSSimulator:
                 print(f"[-] Erro de Alinhamento: Endereço 0x{addr:08X} não está alinhado a 4 bytes.")
                 return
             if addr not in self.memory:
-                print(f"[-] Falha de Segmentação: Endereço 0x{addr:08X} fora da faixa mapeada (0x{MEM_START:04X} - 0x{MEM_END:04X}).")
+                print(f"[-] Falha de Segmentação: Endereço 0x{addr:08X} fora da faixa mapeada.")
                 return
             self.regs[rt] = self.memory[addr] & 0xFFFFFFFF
 
         elif op == "addi":
             # addi $rt, $rs, imm
             if len(tokens) != 4:
-                print("[-] Erro de sintaxe. Uso correto: addi $rt, $rs, imm")
+                print("[-] Erro de sintaxe")
                 return
             rt = self.canonical_reg(tokens[1])
             rs = self.canonical_reg(tokens[2])
@@ -223,7 +216,7 @@ class MIPSSimulator:
         elif op == "xor":
             # xor $rd, $rs, $rt
             if len(tokens) != 4:
-                print("[-] Erro de sintaxe. Uso correto: xor $rd, $rs, $rt")
+                print("[-] Erro de sintaxe")
                 return
             rd = self.canonical_reg(tokens[1])
             rs = self.canonical_reg(tokens[2])
@@ -239,7 +232,7 @@ class MIPSSimulator:
     def cmd_show_reg(self, arg: str):
         reg = self.canonical_reg(arg)
         if not reg:
-            print(f"[-] Registrador desconhecido: '{arg}'. Exemplo: show $t0")
+            print(f"[-] Registrador desconhecido: '{arg}'.")
             return
         val = self.regs[reg]
         print(f"[0x{val:08X}]")
@@ -257,7 +250,7 @@ class MIPSSimulator:
                 return
 
         if addr % 4 != 0:
-            print(f"[-] Endereço 0x{addr:08X} desalinhado (deve ser múltiplo de 4).")
+            print(f"[-] Endereço 0x{addr:08X} desalinhado.")
             return
 
         if addr in self.memory:
@@ -289,7 +282,7 @@ class MIPSSimulator:
             print("\n" + "=" * 60)
             print("  PARABÉNS! FLAG CORRETA SUBMETIDA COM SUCESSO!")
             print(f"  Flag: {FLAG_SECRET}")
-            print("  Você concluiu o desafio forense MIPS com êxito.")
+            print("  Você concluiu o desafio forense MIPS.")
             print("=" * 60 + "\n")
         elif sub_clean.upper() == "XOR_H4CK":
             print("\n[+] Excelente! Você recuperou os dados da memória com sucesso!")

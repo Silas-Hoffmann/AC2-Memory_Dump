@@ -101,12 +101,7 @@ class CTFRequestHandler(SimpleHTTPRequestHandler):
             # Captura a saída do simulador
             stdout_buf = io.StringIO()
             with contextlib.redirect_stdout(stdout_buf):
-                # Intercepta saídas de exit para não matar o servidor
-                if command.lower() in ("exit", "quit"):
-                    print("[+] Sessão reiniciada. Terminal pronto!")
-                    session_data["sim"] = MIPSSimulator()
-                else:
-                    sim.execute_line(command)
+                sim.execute_line(command)
 
             output = stdout_buf.getvalue()
 
