@@ -20,20 +20,20 @@
 
 ## 3. Estrutura da Memória (O Segredo)
 
-A maioria dos endereços de memória conterá "ruído" (valores comuns como `0x00000000`, `0xFFFFFFFF` ou `0x00000001`). Apenas dois endereços específicos conterão dados maiores:
+A maioria dos endereços de memória conterá "ruído". Apenas dois endereços específicos conterão dados maiores:
 
-* **Endereço A (Ex: `0x1014`):** Contém a **Metade 1** (Texto claro em Hex).
-* Valor em Hex: `0x4354467B` (Tradução: `CTF{`)
+* **Endereço A (`0x1014`):** Contém a **Metade 1** (Texto claro em Hex).
+* Valor em Hex: `0x584F525F` (Tradução: `XOR_`)
 
 
-* **Endereço B (Ex: `0x102B`):** Contém a **Metade 2 Criptografada**.
-* Valor em Hex: `0x14650806` (Tradução: Lixo eletrônico)
+* **Endereço B (`0x102C`):** Contém a **Metade 2 Criptografada**.
+* Valor em Hex: `0x107B1114` (Lixo eletrônico)
 
 
 * **A Lógica Reversa:** Em criptografia XOR, aplicar a mesma operação reverte o processo.
-* `0x4354467B` (Metade 1) **XOR** `0x14650806` (Metade 2 Criptografada) = `0x57314E7D`
-* Tradução de `0x57314E7D`: `W1N}`
-* **Flag Final:** `CTF{W1N}`
+* `0x584F525F` (Metade 1) **XOR** `0x107B1114` (Metade 2 Criptografada) = `0x4834434B`
+* Tradução de `0x4834434B`: `H4CK`
+* **Flag Final:** `XOR_H4CK`
 
 
 
@@ -65,37 +65,28 @@ O terminal aceitará comandos iterativos, divididos entre instruções MIPS pura
 
 Para resolver o desafio, o aluno terá que aplicar seus conhecimentos de manipulação de ponteiros e operações lógicas em Assembly. O passo a passo ideal executado no terminal será:
 
-```assembly
+```
 # 1. Configurar o ponteiro inicial da memória
-li $s0, 0x1000
+li $s0, 0x1014
 
-# 2. Inspecionar o primeiro endereço
+# 2. Inspecionar o primeiro endereço (Metade 1):
 lw $t0, 0($s0)
 show $t0 
-# Retorno: [0x00000000] (Ruído, continua buscando)
+# Retorno: [0x584F525F] (Ruído, continua buscando) -> ASCII: XOR_
 
-# 3. Avançar o ponteiro (4 bytes) e ler novamente
-addi $s0, $s0, 4
-lw $t0, 0($s0)
-show $t0
-# ... O aluno repete esse processo (ou encontra os endereços via 'show mem') ...
-
-# 4. Ao chegar no endereço 0x1014 (Metade 1):
-lw $t0, 0($s0)
-show $t0
-# Retorno: [0x4354467B] -> O aluno converte externamente e acha "CTF{"
-
-# 5. Ao chegar no endereço 0x102B (Metade 2 Criptografada):
+# 3. Ao chegar no endereço 0x102C (Metade 2 Criptografada):
 lw $t1, 0($s0)
 show $t1
-# Retorno: [0x14650806] -> O aluno converte externamente e não faz sentido.
+# Retorno: [0x107B1114] -> O aluno converte externamente e não faz sentido.
 
-# 6. O Pulo do Gato: Aluno aplica a operação lógica MIPS entre os dois registradores
+# 4. O Pulo do Gato: Aluno aplica a operação lógica MIPS entre os dois registradores
 xor $t2, $t0, $t1
 
-# 7. O aluno verifica o resultado do registrador de destino
+# 5. O aluno verifica o resultado do registrador de destino
 show $t2
-# Retorno: [0x57314E7D] -> O aluno converte externamente e acha "W1N}"
+# Retorno: [0x4834434B] -> O aluno converte externamente e acha "H4CK}"
+
+# 6. Flag: XOR_H4CK
 
 ```
 

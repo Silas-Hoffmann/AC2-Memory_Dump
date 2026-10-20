@@ -25,7 +25,7 @@ HELP_TEXT = """
 Instruções Suportadas:
 --------------------------------------------------------------------------------
 Comandos MIPS:
-  li $reg, imm             -> Carrega imediato/endereço em $reg
+  li $reg, imm             -> Carrega endereço em $reg
   lw $rt, offset($rs)      -> Lê 32 bits da memória em $rt
   addi $rt, $rs, imm       -> Soma imediata
   xor $rd, $rs, $rt        -> XOR bit a bit
