@@ -71,13 +71,22 @@ class MIPSSimulator:
 
     def init_memory(self):
         """Inicializa o bloco de 50 palavras de memória (0x1000 a 0x10C4)."""
-        noise_pool = [0x00000000, 0xFFFFFFFF, 0x00000001, 0x00000002, 0x00000010, 0x000000FF]
-        # Semente fixa para ruído reprodutível
-        rng = random.Random(42)
+        # Semente fixa para ruído reprodutível com valores hexadecimais realistas de 32 bits
+        rng = random.Random(1337)
+
+        def is_ascii_printable(val: int) -> bool:
+            b = val.to_bytes(4, "big")
+            return all(32 <= x <= 126 for x in b)
 
         addr = MEM_START
         while addr <= MEM_END:
-            self.memory[addr] = rng.choice(noise_pool)
+            while True:
+                # Gera valores hexadecimais variados de 32 bits (dump de memória real)
+                cand = rng.randint(0x10000000, 0xEFFFFFFF)
+                # Garante que nenhum ruído forme texto ASCII legível por acidente
+                if not is_ascii_printable(cand) and cand not in (VAL_HALF1, VAL_HALF2):
+                    self.memory[addr] = cand
+                    break
             addr += 4
 
         # Injeta os dois blocos do desafio
