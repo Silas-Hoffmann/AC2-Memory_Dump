@@ -10,3 +10,4 @@ Um incidente cibernético corrompeu os módulos de controle primários de um sis
 
 - **Arquitetura Base:** Subconjunto MIPS de 32 bits.
 - **Tamanho de cada endereço:** 4 bytes.
+- **Memory Range:** 50 espaços
