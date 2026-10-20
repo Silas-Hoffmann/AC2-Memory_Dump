@@ -17,7 +17,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from simulador import MIPSSimulator, BANNER, HELP_TEXT, FLAG_SECRET
 
 HOST = "0.0.0.0"
-PORT = 8080
+PORT = int(os.environ.get("PORT", 8080))
 
 # Gerenciamento de sessões em memória
 # session_id -> {"sim": MIPSSimulator, "last_active": timestamp, "output_history": list}
